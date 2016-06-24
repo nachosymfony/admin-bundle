@@ -1,0 +1,48 @@
+{% macro renderEntryActionButtons(showPath=false, editPath=false, deletePath=false) %}
+{% if showPath %}
+<a href='{{ showPath }}' class='btn btn-default btn-xs' target='_blank'>
+    {{ 'Show' | trans }}
+    <i class="fa fa-eye"></i>
+</a>
+{% endif %}
+
+{% if editPath %}
+<a href='{{ editPath }}' class='btn btn-default btn-xs'>
+    {{ 'Edit' | trans }}
+    <i class="glyphicon glyphicon-edit"></i>
+</a>
+{% endif %}
+
+{% if deletePath %}
+<a class="btn btn-danger btn-xs"
+    data-href='{{ deletePath }}'
+    data-toggle="confirmation"
+    data-btn-ok-label="{{ 'Delete' | trans }}"
+    data-btn-cancel-label="{{ 'Close' | trans }}"
+    data-placement="left"
+    data-title='{{ 'Delete' | trans }}?'>
+    {{ 'Delete' | trans }}
+    <i class="glyphicon glyphicon-remove"></i>
+</a>
+{% endif %}
+{% endmacro %}
+
+{% macro renderEditDelete(pathPrefix, id, static=false) %}
+<a href='{{ path(pathPrefix ~ '.edit', {id: id}) }}' class='btn btn-default btn-xs'>
+    {{ 'Edit' | trans }}
+    <i class="glyphicon glyphicon-edit"></i>
+</a>
+
+{% if not static %}
+<a class="btn btn-danger btn-xs"
+    data-href='{{ path(pathPrefix ~ '.delete', {id: id}) }}'
+    data-toggle="confirmation"
+    data-btn-ok-label="{{ 'Delete' | trans }}"
+    data-btn-cancel-label="{{ 'Close' | trans }}"
+    data-placement="left"
+    data-title='{{ 'Delete' | trans }}?'>
+    {{ 'Delete' | trans }}
+    <i class="glyphicon glyphicon-remove"></i>
+</a>
+{% endif %}
+{% endmacro %}
