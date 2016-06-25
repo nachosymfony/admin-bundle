@@ -18,6 +18,32 @@
 {% endspaceless %}
 {% endblock %}
 
+{% block multiple_images_row %}
+{{- block('form_row') }}
+<button class='btn btn-default btn-xs addImage' type='button'>Add Image</button>
+<script>
+    $(function() {
+        var imagesCount = $('.images').length;
+
+        $('body').on('click', '.addImage', function() {
+            var productImages = $('.images');
+            var newWidget = productImages.attr('data-prototype');
+
+            newWidget = newWidget.replace(/__images__label__/g, '{{ 'Image' | trans }}: ' + imagesCount);
+            newWidget = newWidget.replace(/__images__/g, imagesCount);
+            imagesCount++;
+
+            newWidget = $(newWidget);
+            newWidget.appendTo(productImages);
+        });
+
+        $('body').on('click', '.deleteImage', function() {
+            $(this).parents('.row.img').html('<span style="color:red;">{{ 'The image will be deleted after saving.' | trans }}</span>');
+        });
+    });
+</script>
+{% endblock %}
+
 {% block vich_image_row -%}
 {% set force_error = true %}
 {{- block('form_row') }}
@@ -25,16 +51,19 @@
 
 {% block vich_image_widget %}
 {% spaceless %}
-<div class="row">
+<div class="row img">
     <div class="col-sm-6 col-md-2">
         {{ form_widget(form.file) }}
-        {% if download_uri %}
+        {% if download_uri is defined and download_uri %}
         <hr>
         <div class="thumbnail">
             <a href="{{ download_uri }}"><img src="{{ download_uri }}" alt="" /></a>
             <div class="caption">
                 {% if form.delete is defined %}
+                <button type='button' class='btn btn-default btn-xs deleteImage'>{{ 'Delete' | trans }}</button>
+                {#
                 {{ form_row(form.delete) }}
+                #}
                 {% endif %}
             </div>
         </div>
