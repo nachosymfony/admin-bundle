@@ -1,4 +1,4 @@
-{% macro renderEntryActionButtons(showPath=false, editPath=false, deletePath=false) %}
+{% macro renderEntryActionButtons(showPath=false, editPath=false, deletePath=false, deletable=true) %}
 {% if showPath %}
 <a href='{{ showPath }}' class='btn btn-default btn-xs' target='_blank'>
     {{ 'Show' | trans }}
@@ -13,7 +13,7 @@
 </a>
 {% endif %}
 
-{% if deletePath %}
+{% if deletePath and deletable %}
 <a class="btn btn-danger btn-xs"
     data-href='{{ deletePath }}'
     data-toggle="confirmation"
