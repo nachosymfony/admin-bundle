@@ -31,6 +31,12 @@
         <!-- DataTables Responsive CSS -->
         <link href="{{ asset('bundles/nacholibreadmin/sb-admin-2/bower_components/datatables-responsive/css/dataTables.responsive.css') }}" rel="stylesheet">
 
+        <!-- DataTables Responsive CSS -->
+        <link href="{{ asset('bundles/nacholibreadmin/vendor/bootstrap-multiselect-master/dist/css/bootstrap-multiselect.css') }}" rel="stylesheet">
+
+        <!-- Custom CSS -->
+        <link href="{{ asset('bundles/nacholibreadmin/css/admin.css') }}" rel="stylesheet">
+
         <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
         <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
         <!--[if lt IE 9]>
@@ -450,8 +456,63 @@
 
         <script src="{{ asset('bundles/nacholibreadmin/vendor/bs-confirmation/bootstrap-confirmation.min.js') }}"></script>
 
+        <script src="{{ asset('bundles/nacholibreadmin/vendor/bootstrap-multiselect-master/dist/js/bootstrap-multiselect.js') }}"></script>
+
         <script>
             $(function() {
+                $('select[multiple]').multiselect({
+                    enableFiltering: true,
+                });
+
+                //collectiontype dobavqne javascript
+                $('div[data-prototype]').each(function(index, element) {
+                    var addButton = $('<button type="button" class="btn btn-success">{{ 'Add' | trans }}</button>');
+
+                    $(this).append(addButton);
+
+                    //dobavqne na ikonka do collectiontype elementite
+                    $(this).parent().find('> label.control-label').append(' <i class="fa fa-plus" aria-hidden="true"></i>');
+
+                    var dataElement = $(this);
+
+                    function pretifyElement(elem) {
+                        elem = $(elem);
+
+                        var html = elem.html().replace(/__name__/g, dataElement.find('> .form-group').length)
+
+                        elem.html(html);
+
+                        var deleteButton = $('<button type="button" class="btn btn-danger btn-xs">{{ 'Delete' | trans }}</button>');
+
+                        deleteButton.click(function(e) {
+                            e.preventDefault();
+                            $(this).parents('.form-group.dynamically_added').html('{{ 'This element will be removed after save!' | trans }}');
+                        });
+
+                        elem.find('label.control-label:first').hide();
+                        elem.addClass('dynamically_added');
+                        elem.wrapInner('<div class="row"><div class="col-md-6"></div></div>');
+                        elem.find('.col-md-6').append(deleteButton);
+
+                        return elem;
+                    }
+
+                    //stilizirane na zaredenite ot predi elementi
+                    $(this).find('> .form-group').not('.dynamically_added').each(function(index, elem) {
+                        pretifyElement(elem);
+                    });
+
+                    addButton.on('click', function(e) {
+                        e.preventDefault();
+
+                        var prototype = dataElement.data('prototype');
+
+                        var newForm = pretifyElement(prototype);
+
+                        addButton.before(newForm);
+                    });
+                });
+
                 var table = $('.datatable').DataTable({
                     responsive: true,
                     'order': [[0, 'desc']],

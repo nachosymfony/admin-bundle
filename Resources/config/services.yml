@@ -15,6 +15,18 @@ services:
         arguments: ['@service_container']
         tags:
             - { name: doctrine.event_subscriber, connection: default }
+
+    base_entity.subscriber:
+        class: nacholibre\AdminBundle\EventListener\BaseEntitySubscriber
+        arguments: ['@service_container']
+        tags:
+            - { name: doctrine.event_subscriber, connection: default }
+
+    sluggable.subscriber:
+        class: nacholibre\AdminBundle\EventListener\SluggableSubscriber
+        arguments: ['@service_container']
+        tags:
+            - { name: doctrine.event_subscriber, connection: default }
 #    nacholibre_admin.example:
 #        class: nacholibre\AdminBundle\Example
 #        arguments: ["@service_id", "plain_value", %parameter%]
