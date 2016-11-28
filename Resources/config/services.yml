@@ -1,7 +1,7 @@
 services:
     nacholibre.admin.bundles.extension:
         class: nacholibre\AdminBundle\Twig\BundleExists
-        arguments: [@service_container]
+        arguments: ["@service_container"]
         tags:
             - { name: twig.extension }
 
