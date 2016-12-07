@@ -1,0 +1,92 @@
+{% block dynamic_slug_row %}
+<div class="form-group{% if (not compound or force_error|default(false)) and not valid %} has-error{% endif %}">
+    {{- form_label(form) -}}
+    <div class="{{ block('form_group_class') }} input-group">
+        {{- form_widget(form) -}}
+        <span class="input-group-btn">
+            <button class="btn btn-default lock_unlock" type="button">
+                <div class='locked'>
+                    <i class="fa fa-lock" aria-hidden="true"></i>
+                    {{ 'locked' | trans({}, 'buttons')}}
+                </div>
+                <div class='unlocked hidden'>
+                    <i class="fa fa-unlock" aria-hidden="true"></i>
+                    {{ 'unlocked' | trans({}, 'buttons')}}
+                </div>
+            </button>
+        </span>
+    </div>
+    <div>
+        {{- form_errors(form) -}}
+    </div>
+</div>
+<script>
+    $(function() {
+        var inputElement = $('#{{ form.vars.id }}');
+
+        {% set key = '_' ~ form.vars.name %}
+        {% set value = '_' ~ form.vars.slug_input %}
+        var slugSourceSelector = '#{{ form.vars.id }}'.replace('{{ key }}', '{{ value }}');
+        var slugSource = $(slugSourceSelector);
+
+        var lockUnlockButton = inputElement.next().find('.lock_unlock');
+
+        var toggable = false;
+        {% if form.vars.toggable %}
+        toggable = true;
+        {% endif %}
+
+        var showToggleButton = true;
+
+        {% if not form.vars.toggable %}
+        showToggleButton = false;
+        {% endif %}
+
+        var newEntity = false;
+        if (!inputElement.val()) {
+            newEntity = true;
+            showToggleButton = false;
+        }
+
+        slugSource.on('change', function() {
+            $.get(Routing.generate('nacholibre.admin_bundle.generate_slug', { query: $(this).val() }), function(res) {
+                if (newEntity) {
+                    inputElement.val(res.slug);
+                } else {
+                    var locked = lockUnlockButton.find('.locked').hasClass('hidden') == false;
+                    if (res.slug && !locked) {
+                        inputElement.val(res.slug);
+                    }
+                }
+            });
+        });
+
+        if (newEntity) {
+            inputElement.prop('readonly', false);
+        } else {
+            inputElement.prop('readonly', true);
+        }
+
+        if (showToggleButton) {
+            lockUnlockButton.click(function() {
+                var locked = $(this).find('.locked').hasClass('hidden') == false;
+                if (locked) {
+                    //unlock
+                    $(this).find('.locked').addClass('hidden');
+                    $(this).find('.unlocked').removeClass('hidden');
+                    inputElement.prop('readonly', false);
+                } else {
+                    //lock
+                    $(this).find('.locked').removeClass('hidden');
+                    $(this).find('.unlocked').addClass('hidden');
+                    inputElement.prop('readonly', true);
+                }
+            });
+        } else {
+            lockUnlockButton.remove();
+            inputElement.parent().removeClass('input-group');
+        }
+
+    });
+</script>
+{% endblock %}
