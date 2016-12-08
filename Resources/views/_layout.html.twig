@@ -585,6 +585,12 @@
                     "separateWordSearch": true
                     });
 
+                    $('[data-toggle="confirmation"]').confirmation({
+                        href: function(elem){
+                            return $(elem).attr('href');
+                        }
+                    });
+
                 });
 
                 $('[data-toggle="confirmation"]').confirmation({
